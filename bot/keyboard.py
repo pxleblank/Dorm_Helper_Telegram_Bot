@@ -7,13 +7,25 @@ from users.models import User
 from bot.config import admin_ids
 
 
-def inline_keyboard_to_take_complain_with_id(complaint_id):
+async def inline_keyboard_to_cancel_complaint_progress():
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton(text="Отмена", callback_data="cancel_complaint_process"))
+    return keyboard
+
+
+async def inline_keyboard_to_join_group(complaint_id):
+    keyboard = InlineKeyboardMarkup()
+    keyboard.add(InlineKeyboardButton("Присоединиться к обработке жалобы", callback_data=f"join_group:{complaint_id}"))
+    return keyboard
+
+
+async def inline_keyboard_to_take_complain_with_id(complaint_id):
     keyboard = InlineKeyboardMarkup()
     keyboard.add(InlineKeyboardButton("Взять жалобу", callback_data=f"take_complain:{complaint_id}"))
     return keyboard
 
 
-async def get_complaint_keyboard(complaint_id):
+async def inline_keyboard_to_cancel_complaint(complaint_id):
     # Создаем клавиатуру для жалобы с кнопкой отмены
     keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(InlineKeyboardButton("Отменить жалобу", callback_data=f"cancel_complaint:{complaint_id}"))
