@@ -1,4 +1,4 @@
-# FSM для регистрации
+import logging
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from asgiref.sync import sync_to_async
 from aiogram import types, Dispatcher
@@ -97,7 +97,11 @@ async def process_pass_photo(message: types.Message, state: FSMContext):
         is_verified=False  # Пользователь еще не проверен
     )
 
+
+    # keyboard = await get_user_keyboard(message.from_user.id)
     await message.answer("Спасибо! Ваши данные отправлены на проверку.")
+    # await message.answer("Можете пользоваться ботом.", reply_markup=keyboard)
+    logging.info("Пользователь отправил заявку.")
     await state.finish()
 
 

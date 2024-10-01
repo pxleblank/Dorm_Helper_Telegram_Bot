@@ -9,22 +9,18 @@ import tracemalloc
 tracemalloc.start()
 
 import logging
-from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.types import ParseMode
-
-from config import API_TOKEN
+from aiogram import types
 from bot.handlers.registration import register_handlers_registration
 from bot.handlers.complaints import register_handlers_complaints
+from bot.handlers.admin import register_handlers_admin
 from bot.keyboard import get_user_keyboard
 
-# Инициализируем бота и диспетчер
-bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
-dp = Dispatcher(bot, storage=MemoryStorage())
+from bot.bot_instance import dp
 
 # Регистрация хендлеров
 register_handlers_registration(dp)
 register_handlers_complaints(dp)
+register_handlers_admin(dp)
 
 
 # Обработчик для любых сообщений без команд

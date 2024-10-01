@@ -15,7 +15,7 @@ async def inline_keyboard_to_cancel_complaint_progress():
 
 async def inline_keyboard_to_join_group(complaint_id):
     keyboard = InlineKeyboardMarkup()
-    keyboard.add(InlineKeyboardButton("Присоединиться к обработке жалобы", callback_data=f"join_group:{complaint_id}"))
+    keyboard.add(InlineKeyboardButton("Присоединиться к обработке жалобы", callback_data=f"join_complaint:{complaint_id}"))
     return keyboard
 
 

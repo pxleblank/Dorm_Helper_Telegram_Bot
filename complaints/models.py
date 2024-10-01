@@ -23,6 +23,7 @@ class Complaint(models.Model):
     ]
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    responsibles = models.ManyToManyField(Responsible, related_name='complaints')
     responsible_in_progress = models.ForeignKey(Responsible, null=True, blank=True, on_delete=models.SET_NULL,
                                                 related_name='complaints_in_progress')
 
