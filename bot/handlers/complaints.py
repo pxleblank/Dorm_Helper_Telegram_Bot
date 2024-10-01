@@ -67,9 +67,11 @@ async def process_complaint_text(message: types.Message, state: FSMContext):
         responsibles = await sync_to_async(list)(Responsible.objects.filter(is_active=True))
         for responsible in responsibles:
             try:
+                username_ = await bot.get_chat(user.telegram_id)
+                username_ = username_.username
                 await bot.send_message(
                     responsible.telegram_id,
-                    f"Новая жалоба от {user.full_name} (Комната {user.room_number}):\n\nID: {complaint_id}\n\n{complaint_text}",
+                    f"Новая жалоба от {user.full_name} (Комната {user.room_number}) (@{username_}):\n\nID: {complaint_id}\n\n{complaint_text}",
                     reply_markup=keyboard
                 )
                 take_complain_with_id_keyboard = await inline_keyboard_to_take_complain_with_id(complaint_id)
