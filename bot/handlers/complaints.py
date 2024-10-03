@@ -47,7 +47,7 @@ async def create_complaint(message: types.Message):
 
 # Обработка текста жалобы
 async def process_complaint_text(message: types.Message, state: FSMContext):
-    from ..main import bot
+    from ..bot_instance import bot
     keyboard = await get_user_keyboard(message.from_user.id)
     user = await sync_to_async(get_user_from_db)(message.from_user.id)
     if user and user.is_verified and not user.is_blocked:
@@ -92,7 +92,7 @@ async def process_complaint_text(message: types.Message, state: FSMContext):
 
 # Обработка команды "Взять жалобу в работу"
 async def take_complaint(call: CallbackQuery):
-    from ..main import bot
+    from ..bot_instance import bot
     keyboard = await get_user_keyboard(call.from_user.id)
 
     responsible = await sync_to_async(Responsible.objects.filter)(telegram_id=call.from_user.id, is_active=True)
@@ -153,7 +153,7 @@ async def take_complaint(call: CallbackQuery):
 
 # Обработчик присоединения к жалобе
 async def join_complaint(call: CallbackQuery):
-    from ..main import bot
+    from ..bot_instance import bot
     complaint_id = int(call.data.split(":")[1])
 
     responsible = await sync_to_async(Responsible.objects.filter)(telegram_id=call.from_user.id, is_active=True)
@@ -229,7 +229,7 @@ async def resolve_complaint(message: types.Message):
 
 
 async def process_complaint_id(message: types.Message, state: FSMContext):
-    from ..main import bot
+    from ..bot_instance import bot
     keyboard = await get_user_keyboard(message.from_user.id)
     try:
         complaint_id = int(message.text)
@@ -311,7 +311,7 @@ async def list_complaints(message: types.Message):
 
 
 async def cancel_complaint(call: CallbackQuery):
-    from ..main import bot
+    from ..bot_instance import bot
     data = call.data.split(":")
     complaint_id = int(data[1])
 

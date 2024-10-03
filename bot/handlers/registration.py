@@ -65,7 +65,7 @@ async def process_room_number(message: types.Message, state: FSMContext):
 
 # Обработка фото пропуска
 async def process_pass_photo(message: types.Message, state: FSMContext):
-    from ..main import bot
+    from ..bot_instance import bot
     data = await state.get_data()
     full_name = data.get('full_name')
     room_number = data.get('room_number')
