@@ -172,39 +172,45 @@ async def join_complaint(call: CallbackQuery):
 
         already_in_group, complaint = await check_responsible_in_complaint()
 
-        if already_in_group:
-            await call.message.answer("Вы уже присоединились к этой жалобе.")
+        if complaint.is_resolved:
+            await call.message.answer("Жалоба с таким ID не найдена или уже решена.")
+
         else:
-            # Обновляем жалобу, добавляем ещё одного ответственного
-            @sync_to_async
-            def add_responsible_to_complaint():
-                complaint.responsibles.add(responsible)
-                complaint.save()
-                return complaint
+            if already_in_group:
+                await call.message.answer("Вы уже присоединились к этой жалобе.")
+            else:
+                # Обновляем жалобу, добавляем ещё одного ответственного
+                @sync_to_async
+                def add_responsible_to_complaint():
+                    complaint.responsibles.add(responsible)
+                    complaint.save()
+                    return complaint
 
-            complaint = await add_responsible_to_complaint()
+                complaint = await add_responsible_to_complaint()
 
-            # Уведомляем всех ответственных о новом участнике
-            responsibles = await sync_to_async(list)(Responsible.objects.filter(is_active=True))
-            for other_responsible in responsibles:
-                try:
-                    responsibles_count = await sync_to_async(complaint.responsibles.count)()
-                    join_keyboard = await inline_keyboard_to_join_group(complaint_id)
-                    if responsible in responsibles:
-                        await bot.send_message(
-                            other_responsible.telegram_id,
-                            f"Жалоба ID {complaint_id} теперь обрабатывается группой из {responsibles_count} человек."
-                        )
-                    else:
-                        await bot.send_message(
-                            other_responsible.telegram_id,
-                            f"Жалоба ID {complaint_id} теперь обрабатывается группой из {responsibles_count} человек.",
-                            reply_markup=join_keyboard
-                        )
-                except Exception as e:
-                    logging.error(f"Ошибка при отправке уведомления ответственному: {e}")
+                # Уведомляем всех ответственных о новом участнике
+                responsibles = await sync_to_async(list)(Responsible.objects.filter(is_active=True))
+                for other_responsible in responsibles:
+                    try:
+                        responsibles_count = await sync_to_async(complaint.responsibles.count)()
+                        responsibles_list = await sync_to_async(list)(complaint.responsibles.all())
+                        responsibles_names = ", ".join([r.full_name for r in responsibles_list])
+                        join_keyboard = await inline_keyboard_to_join_group(complaint_id)
+                        if responsible in responsibles:
+                            await bot.send_message(
+                                other_responsible.telegram_id,
+                                f"Жалоба ID {complaint_id} теперь обрабатывается группой из {responsibles_count} человек: {responsibles_names}"
+                            )
+                        else:
+                            await bot.send_message(
+                                other_responsible.telegram_id,
+                                f"Жалоба ID {complaint_id} теперь обрабатывается группой из {responsibles_count} человек.",
+                                reply_markup=join_keyboard
+                            )
+                    except Exception as e:
+                        logging.error(f"Ошибка при отправке уведомления ответственному: {e}")
 
-            await call.message.answer(f"Вы присоединились к обработке жалобы ID {complaint_id}.")
+                await call.message.answer(f"Вы присоединились к обработке жалобы ID {complaint_id}.")
 
     except Complaint.DoesNotExist:
         await call.message.answer("Жалоба с таким ID не найдена.")
