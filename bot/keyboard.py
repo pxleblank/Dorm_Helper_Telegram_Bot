@@ -15,20 +15,20 @@ async def inline_keyboard_to_cancel_complaint_progress():
 
 async def inline_keyboard_to_join_group(complaint_id):
     keyboard = InlineKeyboardMarkup()
-    keyboard.add(InlineKeyboardButton("Присоединиться к обработке жалобы", callback_data=f"join_complaint:{complaint_id}"))
+    keyboard.add(InlineKeyboardButton("Присоединиться к обработке обращения", callback_data=f"join_complaint:{complaint_id}"))
     return keyboard
 
 
 async def inline_keyboard_to_take_complain_with_id(complaint_id):
     keyboard = InlineKeyboardMarkup()
-    keyboard.add(InlineKeyboardButton("Взять жалобу", callback_data=f"take_complain:{complaint_id}"))
+    keyboard.add(InlineKeyboardButton("Взять обращение", callback_data=f"take_complain:{complaint_id}"))
     return keyboard
 
 
 async def inline_keyboard_to_cancel_complaint(complaint_id):
-    # Создаем клавиатуру для жалобы с кнопкой отмены
+    # Создаем клавиатуру для обращения с кнопкой отмены
     keyboard = InlineKeyboardMarkup(row_width=1)
-    keyboard.add(InlineKeyboardButton("Отменить жалобу", callback_data=f"cancel_complaint:{complaint_id}"))
+    keyboard.add(InlineKeyboardButton("Отменить обращение", callback_data=f"cancel_complaint:{complaint_id}"))
     return keyboard
 
 
@@ -51,9 +51,9 @@ async def get_user_keyboard(user_id):
         if responsible:
             # Если пользователь — ответственный, отправляем клавиатуру для работы с жалобами
             keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-            list_complaints_button = KeyboardButton("Список жалоб")
-            resolve_complaint_button = KeyboardButton("Закрыть жалобу")
-            complain_button = KeyboardButton("Подать жалобу")
+            list_complaints_button = KeyboardButton("Список обращений")
+            resolve_complaint_button = KeyboardButton("Закрыть обращение")
+            complain_button = KeyboardButton("Подать обращение")
             keyboard.add(list_complaints_button, resolve_complaint_button, complain_button)
 
             # Проверка, является ли пользователь админом
@@ -63,7 +63,7 @@ async def get_user_keyboard(user_id):
         else:
             # Если пользователь зарегистрирован, но не ответственный
             keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-            complain_button = KeyboardButton("Подать жалобу")
+            complain_button = KeyboardButton("Подать обращение")
             keyboard.add(complain_button)
 
         return keyboard

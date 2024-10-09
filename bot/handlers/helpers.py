@@ -10,11 +10,11 @@
 #             else:
 #                 logging.error(f"Не удалось отправить сообщение пользователю {user_id}. Ошибка: {e}")
 #
-# Пример: await send_message_with_retry(responsible.telegram_id, f"Новая жалоба от {user.full_name} (Комната {user.room_number}):\n\n{complaint_text}")
+# Пример: await send_message_with_retry(responsible.telegram_id, f"Новая обращение от {user.full_name} (Комната {user.room_number}):\n\n{complaint_text}")
 # Ещё пример:
 # for responsible in responsibles:
 #     try:
-#         await bot.send_message(responsible.telegram_id, f"Новая жалоба от {user.full_name} (Комната {user.room_number}):\n\n{complaint_text}")
+#         await bot.send_message(responsible.telegram_id, f"Новая обращение от {user.full_name} (Комната {user.room_number}):\n\n{complaint_text}")
 #         await asyncio.sleep(0.5)  # Задержка между отправками
 #     except Exception as e:
 #         logging.error(f"Ошибка при отправке уведомления ответственному: {e}")
@@ -38,7 +38,7 @@
 #
 #         # Если пользователь проверен, добавляем дополнительные команды
 #         if user.is_verified:
-#             commands.append("/complain - Подать жалобу")
+#             commands.append("/complain - Подать обращение")
 #
 #         # Если пользователь является ответственным, добавляем команды для ответственных
 #         responsible = await sync_to_async(Responsible.objects.filter)(telegram_id=message.from_user.id,
@@ -47,8 +47,8 @@
 #
 #         if responsible:
 #             commands.extend([
-#                 "/list_complaints - Просмотр открытых жалоб",
-#                 "/resolve_complaint - Решить жалобу"
+#                 "/list_complaints - Просмотр открытых обращений",
+#                 "/resolve_complaint - Решить обращение"
 #             ])
 #
 #         # Формируем и отправляем список доступных команд

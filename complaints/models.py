@@ -19,7 +19,7 @@ class Complaint(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Ожидает решения'),
         ('in_progress', 'В процессе решения'),
-        ('resolved', 'Решена')
+        ('resolved', 'Решено')
     ]
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
