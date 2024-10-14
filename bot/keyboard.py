@@ -54,7 +54,9 @@ async def get_user_keyboard(user_id):
             list_complaints_button = KeyboardButton("Список обращений")
             resolve_complaint_button = KeyboardButton("Закрыть обращение")
             complain_button = KeyboardButton("Подать обращение")
-            keyboard.add(list_complaints_button, resolve_complaint_button, complain_button)
+            keyboard.add(list_complaints_button)
+            keyboard.add(resolve_complaint_button)
+            keyboard.add(complain_button)
 
             # Проверка, является ли пользователь админом
             if user_id in admin_ids:

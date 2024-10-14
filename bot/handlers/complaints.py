@@ -285,6 +285,7 @@ async def process_complaint_id(message: types.Message, state: FSMContext):
 
 # Обработка команды для получения списка обращений
 async def list_complaints(message: types.Message):
+    from ..bot_instance import bot
     keyboard = await get_user_keyboard(message.from_user.id)
 
     responsible = await sync_to_async(Responsible.objects.filter)(telegram_id=message.from_user.id, is_active=True)
@@ -303,15 +304,18 @@ async def list_complaints(message: types.Message):
 
     # Формируем список обращений с учётом их статуса
     complaint_list = []
+    user = await sync_to_async(get_user_from_db)(message.from_user.id)
+    username_ = await bot.get_chat(user.telegram_id)
+    username_ = username_.username
     for complaint in complaints:
         if complaint.status == 'in_progress':
             responsibles_list = await sync_to_async(list)(complaint.responsibles.all())
             responsibles_names = ", ".join([r.full_name for r in responsibles_list])
             responsible_in_progress = await sync_to_async(lambda: complaint.responsible_in_progress.full_name)()
             complaint_list.append(
-                f"ID: {complaint.id} - {complaint.description} (В процессе ответственными: {responsibles_names})")
+                f"ID: {complaint.id} (от @{username_}) - {complaint.description} (В процессе ответственными: {responsibles_names})")
         else:
-            complaint_list.append(f"ID: {complaint.id} - {complaint.description} (Ожидает решения)")
+            complaint_list.append(f"ID: {complaint.id} (от @{username_}) - {complaint.description} (Ожидает решения)")
 
     temp = '\n'.join(complaint_list)
 
