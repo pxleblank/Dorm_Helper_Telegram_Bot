@@ -61,7 +61,20 @@ async def start_command(message: types.Message):
 
 
 # Обработчик нажатия на кнопку "Регистрация"
-async def register_command(message: types.Message):
+async def register_command(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state:  # Пользователь уже в процессе регистрации
+        step_name = current_state.split(":")[-1]  # Получаем текущий шаг регистрации
+        instructions = {
+            "full_name": "Введите ваше ФИО полностью.",
+            "room_number": "Введите номер вашей комнаты.",
+            "pass_photo": "Отправьте фото вашего пропуска.",
+        }
+        await message.answer(
+            f"Вы уже начали процесс регистрации. {instructions.get(step_name, 'Пожалуйста, завершите регистрацию.')}"
+        )
+        return
+
     keyboard = await get_user_keyboard(message.from_user.id)
     # Проверяем, зарегистрирован ли пользователь
     user = await sync_to_async(get_user_from_db)(message.from_user.id)
@@ -132,7 +145,7 @@ async def process_pass_photo(message: types.Message, state: FSMContext):
 # Функция для регистрации хендлеров
 def register_handlers_registration(dp: Dispatcher):
     dp.register_message_handler(start_command, commands="start")
-    dp.register_message_handler(register_command, lambda message: message.text == "Регистрация")
+    dp.register_message_handler(register_command, lambda message: message.text == "Регистрация", state="*")
     dp.register_message_handler(process_full_name, state=Registration.full_name)
     dp.register_message_handler(process_room_number, state=Registration.room_number)
     dp.register_message_handler(process_pass_photo, content_types=['photo'], state=Registration.pass_photo)

@@ -61,7 +61,9 @@ async def get_user_keyboard(user_id):
             # Проверка, является ли пользователь админом
             if user_id in admin_ids:
                 add_responsible_button = KeyboardButton("Добавить ответственного")
+                add_unverified_users_button = KeyboardButton("Неверифицированные пользователи")
                 keyboard.add(add_responsible_button)
+                keyboard.add(add_unverified_users_button)
         else:
             # Если пользователь зарегистрирован, но не ответственный
             keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
