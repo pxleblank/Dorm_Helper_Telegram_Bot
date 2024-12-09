@@ -38,7 +38,7 @@ async def create_complaint(message: types.Message):
                 await message.answer("Вы уже отправили обращение, дождитесь его решения.", reply_markup=keyboard)
             else:
                 cancel_complaint_in_text_keyboard = await inline_keyboard_to_cancel_complaint_progress()
-                await message.answer("Пожалуйста, напишите текст вашей обращения.",
+                await message.answer("Пожалуйста, напишите текст вашего обращения.",
                                      reply_markup=cancel_complaint_in_text_keyboard)
                 await ComplaintForm.waiting_for_complaint_text.set()  # Устанавливаем состояние
         else:
@@ -60,7 +60,7 @@ async def process_complaint_text(message: types.Message, state: FSMContext):
         complaint_id = complaint.id
 
         complaint_keyboard = await inline_keyboard_to_cancel_complaint(complaint_id)
-        await message.answer("Ваша обращение принято и будет рассмотрена в ближайшее время.", reply_markup=keyboard)
+        await message.answer("Ваше обращение принято и будет рассмотрено в ближайшее время.", reply_markup=keyboard)
         await message.answer("Чтобы отменить обращение нажмите на кнопку:", reply_markup=complaint_keyboard)
 
         # Уведомляем всех активных ответственных
@@ -71,7 +71,7 @@ async def process_complaint_text(message: types.Message, state: FSMContext):
                 username_ = username_.username
                 await bot.send_message(
                     responsible.telegram_id,
-                    f"Новая обращение от {user.full_name} (Комната {user.room_number}) (@{username_}):\n\nID: {complaint_id}\n\n{complaint_text}",
+                    f"Новое обращение от {user.full_name} (Комната {user.room_number}) (@{username_}):\n\nID: {complaint_id}\n\n{complaint_text}",
                     reply_markup=keyboard
                 )
                 take_complain_with_id_keyboard = await inline_keyboard_to_take_complain_with_id(complaint_id)
@@ -127,7 +127,7 @@ async def take_complaint(call: CallbackQuery):
                     f"Обращение ID {complaint_id} уже взята в работу ответственным: {responsible_in_progress}.",
                     reply_markup=keyboard)
             else:
-                await call.message.answer(f"Обращение с ID {complaint_id} не найдено или уже взята в работу.",
+                await call.message.answer(f"Обращение с ID {complaint_id} не найдено или уже взято в работу.",
                                           reply_markup=keyboard)
         else:
             await call.message.answer(f"Вы взяли обращение ID {complaint_id} в работу.", reply_markup=keyboard)
@@ -139,7 +139,7 @@ async def take_complaint(call: CallbackQuery):
                 try:
                     join_keyboard = await inline_keyboard_to_join_group(complaint_id)
                     await bot.send_message(other_responsible.telegram_id,
-                                           f"Обращение ID {complaint_id} была взята в работу ответственным {responsible.full_name}.",
+                                           f"Обращение ID {complaint_id} было взято в работу ответственным {responsible.full_name}.",
                                            reply_markup=join_keyboard)
                 except Exception as e:
                     logging.error(f"Ошибка при отправке уведомления ответственному: {e}")
@@ -228,7 +228,7 @@ async def resolve_complaint(message: types.Message):
         return
 
     # Запрашиваем номер обращения (или ID обращения)
-    await message.answer("Введите ID обращения, которую вы хотите закрыть:")
+    await message.answer("Введите ID обращения, которое вы хотите закрыть:")
 
     # FSM для получения ID обращения
     await ComplaintForm.waiting_for_complaint_id.set()
@@ -272,7 +272,7 @@ async def process_complaint_id(message: types.Message, state: FSMContext):
 
                 await bot.send_message(
                     user_telegram_id,
-                    f"Ваша обращение решено ответственным: {responsible_full_name}.", reply_markup=keyboard
+                    f"Ваше обращение решено ответственным: {responsible_full_name}.", reply_markup=keyboard
                 )
             except Exception as e:
                 logging.error(f"Ошибка при отправке уведомления студенту: {e}")
@@ -332,7 +332,7 @@ async def cancel_complaint(call: CallbackQuery):
         complaint = await sync_to_async(Complaint.objects.get)(id=complaint_id)
 
         if complaint.is_resolved is True:
-            await call.message.answer("Эта обращение уже закрыта.")
+            await call.message.answer("Это обращение уже закрыто.")
             return
 
         # Закрываем обращение
@@ -340,7 +340,7 @@ async def cancel_complaint(call: CallbackQuery):
         complaint.is_resolved = True
         await sync_to_async(complaint.save)()
 
-        await call.message.answer(f"Вы успешно отменили обращение ID {complaint_id}. Обращение закрыта.")
+        await call.message.answer(f"Вы успешно отменили обращение ID {complaint_id}. Обращение закрыто.")
 
         # Уведомляем ответственных о том, что обращение была отменена
         responsibles = await sync_to_async(list)(Responsible.objects.filter(is_active=True))
@@ -348,7 +348,7 @@ async def cancel_complaint(call: CallbackQuery):
             try:
                 await bot.send_message(
                     responsible.telegram_id,
-                    f"Обращение ID {complaint_id} была отменена пользователем {call.from_user.full_name}."
+                    f"Обращение ID {complaint_id} было отменено пользователем {call.from_user.full_name}."
                 )
             except Exception as e:
                 logging.error(f"Ошибка при отправке уведомления ответственному: {e}")
@@ -365,6 +365,9 @@ async def cancel_complaint_process(call: CallbackQuery, state: FSMContext):
     await state.finish()
     await call.message.edit_reply_markup()  # Убираем клавиатуру после отмены
     await call.message.answer("Подача обращения отменена.", reply_markup=keyboard)
+
+
+
 
 
 # Функция для регистрации хендлеров
