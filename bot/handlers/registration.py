@@ -120,7 +120,7 @@ async def process_pass_photo(message: types.Message, state: FSMContext):
     file = await bot.download_file(file_path)
 
     # Определяем путь для сохранения файла с именем ФИО
-    local_file_path = f'media/pass_photos/{safe_filename}.jpg'
+    local_file_path = f'/app/media/pass_photos/{safe_filename}.jpg'
 
     # Сохраняем файл на сервере
     with open(local_file_path, 'wb') as f:

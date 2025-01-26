@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    image: app-dorm6
+    build: .
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - /home/user/app/db.sqlite3:/app/db.sqlite3
+      - /home/user/app/media:/app/media
+      - /home/user/static:/app/static
+      - /home/user/staticfiles:/app/staticfiles
+
+    environment:
+      - DJANGO_SETTINGS_MODULE=Dorm6HelperBot.settings
